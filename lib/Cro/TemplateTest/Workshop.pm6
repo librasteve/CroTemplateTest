@@ -1,7 +1,54 @@
 say "Initializing Workshop";
 
+#slightly tweaked example of gfldex Low profile quoting post
+#viz. https://gfldex.wordpress.com/2021/06/01/low-profile-quoting/
+#viz. https://p6steve.wordpress.com/2021/06/04/414/
+#in Comma IDE set ⌘, - editor - color scheme - raku - bad syntax OFF
+
+constant term:<§> = class :: does Associative {
+    sub qh($s) {
+        $s.trans([ '<'   , '>'   , '&' ] =>
+                 [ '&lt;', '&gt;', '&amp;' ])
+    }
+    sub et($k) {
+        my @empty-tags = <area base br col hr img input link meta param command keygen source>;
+        ' /' if $k ~~ @empty-tags.any
+    }
+    sub qa(%_) {
+        %_.map({
+            if    .value ~~ Bool && True     { .key }
+            elsif .value ~~ /^ <[.?!$@:&|]>/ { .key ~ '="<' ~ .value ~ '>"' }  #Cro Template char set
+            else                             { .key ~ '="'  ~ .value ~  '"' }
+        }).join(' ')
+    }
+    
+    role NON-QUOTE {}
+    
+    method AT-KEY($key) {
+        when $key ~~ /^ '&' / {
+            $key does NON-QUOTE
+        }
+        when $key ~~ /\w+/ {
+            sub (*@a, *%_) {
+                (
+                '<' ~ $key ~ (+%_ ?? ' ' !! '')
+                    ~ qa(%_) ~ et($key) ~ '>'
+                    ~ @a.map({ $^a ~~ NON-QUOTE ?? $^a !! $^a.&qh }).join('')
+                    ~ ( et($key) ?? '' !! '</' ~ $key ~ '>' )
+                ) does NON-QUOTE
+            }
+        }
+    }
+}
+
+sub pretty-print-html(Str $html is rw --> Str) {
+    $html ~~ s:g/'<' <!before <[.?!$@:&|/]>>/$?NL\</;     #Cro Template char set + '/'
+    $html ~~ s:g/'><'/\>$?NL\</;
+    return '<!DOCTYPE html>' ~ $html;
+}
+
 class Context {
-    has $.action = 'mailto:p6steve.com';
+    has $.action = 'mailto:you@p6steve.com';
     has $.cf-name = 'p6steve';
     has $.cf-email = 'me@p6steve.com';
     has $.cf-subject = 'Raku does HTML';
@@ -15,63 +62,9 @@ class Workshop {
         self.init-qform;
         self.init-cform;
     }
-    method init-cform() {
-        spurt "templates/cform.crotmp", "<h1>yo</h1>";
-    }
     method init-qform() {
         ##say dir "templates/";
-
-        #slightly tweaked example of gfldex Low profile quoting post
-        #viz. https://gfldex.wordpress.com/2021/06/01/low-profile-quoting/
-        #viz. https://p6steve.wordpress.com/2021/06/04/414/
-        #in Comma IDE set ⌘, - editor - color scheme - raku - bad syntax OFF
         
-        constant term:<§> = class :: does Associative {
-            sub qh($s) {
-                $s.trans([ '<'   , '>'   , '&' ] =>
-                        [ '&lt;', '&gt;', '&amp;' ])
-            }
-            sub et($k) {
-                my @empty-tags = <area base br col hr img input link meta param command keygen source>;
-                ' /' if $k ~~ @empty-tags.any
-            }
-            sub qa(%_) {
-                %_.map({
-                    if .value ~~ Bool && True { .key }
-                    else {.key ~ '="' ~ .value ~ '"' }
-                }).join(' ')
-            }
-
-            role NON-QUOTE {}
-
-            method AT-KEY($key) {
-                when $key ~~ /^ '&' / {
-                    $key does NON-QUOTE
-                }
-                when $key ~~ /\w+/ {
-                    sub (*@a, *%_) {
-                        (
-                        '<' ~ $key ~ (+%_ ?? ' ' !! '')
-                            ~ qa(%_) ~ et($key) ~ '>'
-                            ~ @a.map({ $^a ~~ NON-QUOTE ?? $^a !! $^a.&qh }).join('')
-                            ~ ( et($key) ?? '' !! '</' ~ $key ~ '>' )
-                        ) does NON-QUOTE
-                    }
-                }
-                #`[  #iamerejh
-                when $value ~~ /^ <[.?!$@:&|]>/ {
-                    $key does NON-QUOTE
-                }
-                #]
-            }
-        }
-
-        sub pretty-print-html(Str $html is rw --> Str) {
-            $html ~~ s:g/'<' <!before \/>/$?NL\</;
-            $html ~~ s:g/'><'/\>$?NL\</;
-            return '<!DOCTYPE html>' ~ $html;
-        }
-
         my $css = q:to/END/;
         #demoFont {
         font-size: 16px;
@@ -110,5 +103,8 @@ class Workshop {
         );
         
         spurt "templates/qform.crotmp", pretty-print-html($html);
+    }
+    method init-cform() {
+        spurt "templates/cform.crotmp", "<h1>yo</h1>";
     }
 }
