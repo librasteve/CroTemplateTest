@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+</title>
+</head>
+<style type="text/css">#demoFont {
+font-size: 16px;
+color: #ff0000;
+}
+</style>
+<body>
+<form method="post" action=".action">
+<p>Your Name (required)</p>
+<input value="p6steve" required type="text" pattern="[a-zA-Z0-9 ]+" size="40" name="cf-name" />
+<p>Your Email (required)</p>
+<input type="email" required size="40" value="me@p6steve.com" name="cf-email" />
+<p>Your Subject (required)</p>
+<input size="40" pattern="[a-zA-Z0-9 ]+" type="text" value="Raku does HTML" required name="cf-subject" />
+<p id="demoFont">Your Message (required)</p>
+<p>
+<textarea name="cf-message" rows="10" required cols="35">Describe your feelings about this...</textarea>
+</p>
+<input type="submit" value="Send" name="cf-submitted" />
+</form>
+</body>
+</html>

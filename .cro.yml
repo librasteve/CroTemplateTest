@@ -1,0 +1,15 @@
+---
+id: "Cro::TemplateTest"
+cro: 1
+name: "Cro::TemplateTest"
+endpoints:
+  -
+    id: http
+    name: HTTP
+    protocol: http
+    host-env: CRO__TEMPLATETEST_HOST
+    port-env: CRO__TEMPLATETEST_PORT
+links:  []
+entrypoint: service.p6
+env:  []
+...

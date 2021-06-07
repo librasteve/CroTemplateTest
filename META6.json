@@ -1,0 +1,24 @@
+{
+  "name": "Cro::TemplateTest",
+  "description": "Write me!",
+  "version": "0.1",
+  "perl": "6.*",
+  "authors": [
+    "Write me!"
+  ],
+  "auth": "Write me!",
+  "depends": [
+    "Cro::HTTP",
+    "Cro::WebApp"
+  ],
+  "build-depends": [],
+  "test-depends": [
+    "Cro::HTTP::Test"
+  ],
+  "provides": {
+    "Cro::TemplateTest::Routes": "lib/Cro/TemplateTest/Routes.pm6"
+  },
+  "resources": [],
+  "license": "Write me!",
+  "source-url": "Write me!"
+}
