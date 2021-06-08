@@ -30,11 +30,12 @@ constant term:<§> = class :: does Associative {
         }
         when $key ~~ /\w+/ {
             sub (*@a, *%_) {
+                #dd @a;
                 (
                 '<' ~ $key ~ (+%_ ?? ' ' !! '')
                     ~ qa(%_) ~ et($key) ~ '>'
-                    ~ @a.map({ $^a ~~ NON-QUOTE ?? $^a !! $^a.&qh }).join('')
-                    ~ ( et($key) ?? '' !! '</' ~ $key ~ '>' )
+                    ~ @a.map({ $^a ~~ NON-QUOTE ?? $^a !! qh($^a) }).join('')
+                    ~ (et($key) ?? '' !! '</' ~ $key ~ '>')
                 ) does NON-QUOTE
             }
         }
@@ -42,7 +43,7 @@ constant term:<§> = class :: does Associative {
 }
 
 sub pretty-print-html(Str $html is rw --> Str) {
-    $html ~~ s:g/'<' <!before <[.?!$@:&|/]>>/$?NL\</;     #Cro Template char set + '/'
+    $html ~~ s:g/'<' <!before <[.?!$@:&|/]>>/$?NL\</;     #Cro Template char set + end tag '/'
     $html ~~ s:g/'><'/\>$?NL\</;
     return '<!DOCTYPE html>' ~ $html;
 }
@@ -62,6 +63,9 @@ class Workshop {
         self.init-qform;
         self.init-cform;
     }
+    method init-cform() {
+        spurt "templates/cform.crotmp", "<h1>yo</h1>";
+    }
     method init-qform() {
         ##say dir "templates/";
         
@@ -71,28 +75,25 @@ class Workshop {
         color: #ff0000;
         }
         END
-
-        my $action = 'mailto:me@p6steve.com';
-        my $cf-name = 'p6steve';
-        my $cf-email = 'me@p6steve.com';
-        my $cf-subject = 'Raku does HTML';
-        my $cf-message = 'Describe your feelings about this...';
-
+        
         my $size = <40>;
         my $pattern = <[a-zA-Z0-9 ]+>;
+
+        #turns out quoting Cro templates eg. <.cf-message> in the payload is non-trivial
+        my $cf-message = 'Describe your feelings about this...';
         
         my $html = §<html>(§<head>(§<title>()),
             §<style>(:type<text/css>, $css),
             §<body>(
                 §<form>(:action<.action>, :method<post>,
                     §<p>('Your Name (required)'),
-                    §<input>(:type<text>, :required, :name<cf-name>, :value($cf-name), :$size, :$pattern,),
+                    §<input>(:type<text>, :required, :name<cf-name>, :value<.cf-name>, :$size, :$pattern,),
 
                     §<p>('Your Email (required)'),
-                    §<input>(:type<email>, :required, :name<cf-email>, :value($cf-email), :$size,),  #email type validates input
+                    §<input>(:type<email>, :required, :name<cf-email>, :value<.cf-email>, :$size,),  #email type validates input
 
                     §<p>('Your Subject (required)'),
-                    §<input>(:type<text>, :required, :name<cf-subject>, :value($cf-subject), :$size, :$pattern,),
+                    §<input>(:type<text>, :required, :name<cf-subject>, :value<.cf-subject>, :$size, :$pattern,),
 
                     §<p>(:id<demoFont>, 'Your Message (required)'),
                     §<p>(§<textarea>(:rows<10>, :cols<35>, :required, :name<cf-message>, $cf-message, ),),
@@ -101,10 +102,8 @@ class Workshop {
                 )
             )
         );
+        #Q: how to make payload be a Cro tag
         
         spurt "templates/qform.crotmp", pretty-print-html($html);
-    }
-    method init-cform() {
-        spurt "templates/cform.crotmp", "<h1>yo</h1>";
     }
 }
