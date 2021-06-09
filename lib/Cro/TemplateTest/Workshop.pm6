@@ -70,7 +70,15 @@ class Workshop {
         self.init-cform;
     }
     method init-cform() {
-        ##spurt "templates/cform.crotmp", "<h1>yo</h1>";
+        #It is possible to mix LPQ and Cro::WebApp::Form s like this
+        #Since the &form is in the payload, use must double quotes "" and backwhack the \&
+        my $html =  §<html>(
+                        §<body>(
+                            §<h1>('Submit a review'),
+                            "<\&form(.form, :submit-button-text('Send your review'))>"
+                        )
+                    );
+        spurt "templates/cform.crotmp", pretty-print-html($html);
     }
     method init-qform() {
         ##say dir "templates/";
@@ -105,7 +113,6 @@ class Workshop {
                 )
             )
         );
-        
         spurt "templates/qform.crotmp", pretty-print-html($html);
     }
 }

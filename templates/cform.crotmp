@@ -1,6 +1,7 @@
+<!DOCTYPE html>
 <html>
-  <body>
-    <h1>Submit a review</h1>
-    <&form(.form, :submit-button-text('Send your review'))>
-  </body>
+<body>
+<h1>Submit a review</h1>
+<&form(.form, :submit-button-text('Send your review'))>
+</body>
 </html>

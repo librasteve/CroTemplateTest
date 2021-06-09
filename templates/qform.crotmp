@@ -12,18 +12,18 @@ color: #ff0000;
 <body>
 <form action="<.action>" method="post">
 <p>Your Name (required)</p>
-<input required type="text" pattern="[a-zA-Z0-9 ]+" value="<.cf-name>" name="cf-name" size="40" />
+<input size="40" value="<.cf-name>" required name="cf-name" type="text" pattern="[a-zA-Z0-9 ]+" />
 <p>Your Email (required)</p>
-<input required name="cf-email" size="40" type="email" value="<.cf-email>" />
+<input type="email" name="cf-email" value="<.cf-email>" required size="40" />
 <p>Your Subject (required)</p>
-<input required value="<.cf-subject>" pattern="[a-zA-Z0-9 ]+" name="cf-subject" size="40" type="text" />
+<input type="text" pattern="[a-zA-Z0-9 ]+" required value="<.cf-subject>" name="cf-subject" size="40" />
 <p id="demoFont">Your Message (required)</p>
 <p>
-<textarea rows="10" required name="cf-message" cols="35">
+<textarea cols="35" rows="10" required name="cf-message">
 <.cf-message>
 </textarea>
 </p>
-<input type="submit" value="Send" name="cf-submitted" />
+<input name="cf-submitted" type="submit" value="Send" />
 </form>
 </body>
 </html>
