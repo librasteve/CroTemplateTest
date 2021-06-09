@@ -4,6 +4,7 @@ say "Initializing Workshop";
 #viz. https://gfldex.wordpress.com/2021/06/01/low-profile-quoting/
 #viz. https://p6steve.wordpress.com/2021/06/04/414/
 #in Comma IDE set ⌘, - editor - color scheme - raku - bad syntax OFF
+#nb. use '' quotes where you embed Cro tags in the payload (not needed for attr)
 
 constant term:<§> = class :: does Associative {
     sub qh($s) {
