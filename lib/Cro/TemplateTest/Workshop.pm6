@@ -8,7 +8,12 @@ say "Initializing Workshop";
 constant term:<§> = class :: does Associative {
     sub qh($s) {
         $s.trans([ '<'   , '>'   , '&' ] =>
-                 [ '&lt;', '&gt;', '&amp;' ])
+                 [ '«'   , '»'   , '§' ]);                  #first shift to "code"
+        
+        $s ~~ s:g/'«' <[.?!$@:&|]> (<-[»]>)* '»' /<$0>/;    #second handle all the Cro tags
+        
+        $s.trans([ '«'   , '»'   , '§' ] =>
+                 [ '&lt;', '&gt;', '&amp;' ]);              #third do the residual HTML tags
     }
     sub et($k) {
         my @empty-tags = <area base br col hr img input link meta param command keygen source>;
@@ -53,7 +58,7 @@ class Context {
     has $.cf-name = 'p6steve';
     has $.cf-email = 'me@p6steve.com';
     has $.cf-subject = 'Raku does HTML';
-    has $.cf-message = 'Describe your feelings about this...';
+    has $.cf-message = 'Describe some of your feelings about this...';
 }
 class Workshop {
     method context() {
@@ -78,9 +83,6 @@ class Workshop {
         
         my $size = <40>;
         my $pattern = <[a-zA-Z0-9 ]+>;
-
-        #turns out quoting Cro templates eg. <.cf-message> in the payload is non-trivial
-        my $cf-message = 'Describe your feelings about this...';
         
         my $html = §<html>(§<head>(§<title>()),
             §<style>(:type<text/css>, $css),
@@ -96,13 +98,12 @@ class Workshop {
                     §<input>(:type<text>, :required, :name<cf-subject>, :value<.cf-subject>, :$size, :$pattern,),
 
                     §<p>(:id<demoFont>, 'Your Message (required)'),
-                    §<p>(§<textarea>(:rows<10>, :cols<35>, :required, :name<cf-message>, $cf-message, ),),
+                    §<p>(§<textarea>(:rows<10>, :cols<35>, :required, :name<cf-message>, '<.cf-message>', ),),
 
                     §<input>(:type<submit>, :name<cf-submitted>, :value<Send>,),
                 )
             )
         );
-        #Q: how to make payload be a Cro tag
         
         spurt "templates/qform.crotmp", pretty-print-html($html);
     }
