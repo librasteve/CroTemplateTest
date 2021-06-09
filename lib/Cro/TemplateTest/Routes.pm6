@@ -6,12 +6,6 @@ use Cro::TemplateTest::Workshop;
 my Workshop $ws = Workshop.new;
 $ws.init;
 
-class Review does Cro::WebApp::Form {
-    has Str $.name is required;
-    has Int $.rating is required will select { 1..5 };
-    has Str $.comment is multiline(:5rows, :60cols) is maxlength(1000);
-}
-
 sub routes() is export {
     route {
         get -> {

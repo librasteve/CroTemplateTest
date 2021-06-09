@@ -1,3 +1,5 @@
+use Cro::WebApp::Form;
+
 say "Initializing Workshop";
 
 #slightly tweaked example of gfldex Low profile quoting post
@@ -61,6 +63,11 @@ class Context {
     has $.cf-subject = 'Raku does HTML';
     has $.cf-message = 'Describe some of your feelings about this...';
 }
+class Review does Cro::WebApp::Form {
+    has Str $.name is required;
+    has Int $.rating is required will select { 1..5 };
+    has Str $.comment is multiline(:5rows, :60cols) is maxlength(1000);
+}
 class Workshop {
     method context() {
         Context.new;
@@ -72,12 +79,11 @@ class Workshop {
     method init-cform() {
         #It is possible to mix LPQ and Cro::WebApp::Form s like this
         #Since the &form is in the payload, use must double quotes "" and backwhack the \&
-        my $html =  §<html>(
-                        §<body>(
-                            §<h1>('Submit a review'),
-                            "<\&form(.form, :submit-button-text('Send your review'))>"
-                        )
-                    );
+        my $html =  §<html>(§<body>(
+                §<h1>('Submit a review'),
+                "<\&form(.form, :submit-button-text('Send your review'))>"
+            )
+        );
         spurt "templates/cform.crotmp", pretty-print-html($html);
     }
     method init-qform() {
