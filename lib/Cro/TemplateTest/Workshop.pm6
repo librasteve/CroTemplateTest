@@ -9,12 +9,12 @@ say "Initializing Workshop";
 constant term:<§> = class :: does Associative {
     sub qh($s) {
         $s.trans([ '<'   , '>'   , '&' ] =>
-                 [ '«'   , '»'   , '§' ]);                  #first shift to "code"
+                 [ '«'   , '»'   , '§' ]);                  #first shift some things "aside"
         
         $s ~~ s:g/'«' <[.?!$@:&|]> (<-[»]>)* '»' /<$0>/;    #second handle all the Cro tags
         
         $s.trans([ '«'   , '»'   , '§' ] =>
-                 [ '&lt;', '&gt;', '&amp;' ]);              #third do the residual HTML tags
+                 [ '&lt;', '&gt;', '&amp;' ]);              #third shift back to do residual HTML tags
     }
     sub et($k) {
         my @empty-tags = <area base br col hr img input link meta param command keygen source>;
@@ -70,7 +70,7 @@ class Workshop {
         self.init-cform;
     }
     method init-cform() {
-        spurt "templates/cform.crotmp", "<h1>yo</h1>";
+        ##spurt "templates/cform.crotmp", "<h1>yo</h1>";
     }
     method init-qform() {
         ##say dir "templates/";
